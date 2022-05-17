@@ -33,8 +33,9 @@ class Flowfield {
 						n[0] >= 0 && n[0] < this.dim - 1 && n[1] >= 0 && n[1] < this.dim - 1
 				)
 				let sum = 0
-				neighs.forEach(n => (sum += getSignedAng(this.ff[n[0]][n[1]], ang)))
-				sum *= 1 / neighs.length
+				neighs.forEach(
+					n => (sum += getSignedAng(this.ff[n[0]][n[1]], ang) / neighs.length)
+				)
 				// let diff = getSignedAng(ang, sum)
 				this.ff[row][col] = ang * (1 - strength) + sum * strength
 			})
@@ -62,18 +63,12 @@ class Flowfield {
 	getAng(x, y) {
 		let ffCol = Math.max(
 			0,
-			Math.min(
-				this.ff.length - 1,
-				Math.floor((Math.abs(x - width / 2) / (width / 2)) * this.ff.length)
-			)
+			Math.min(this.ff.length - 1, Math.floor((x / width) * this.ff.length))
 		)
 		let ffRow = Math.max(
 			0,
 			Math.min(this.ff.length - 1, Math.floor((y / height) * this.ff.length))
 		)
-		if (isNaN(ffRow) || isNaN(ffCol)) {
-			console.log(123)
-		}
 		return this.ff[ffRow][ffCol]
 	}
 }

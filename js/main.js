@@ -3,6 +3,7 @@ window.$fxhashFeatures = {}
 class Grid {
 	constructor() {
 		this.init()
+		this.tmpPoints = []
 	}
 	init() {
 		this.gridSize = opts.gridSize
@@ -95,16 +96,18 @@ class Grid {
 
 let curvesToDraw = []
 
+let dSep = 6
+let curveLength = 7
 var opts = {
-	gridSize: 100,
+	gridSize: Math.ceil(width / dSep),
+	samplesPerCurve: Math.max(2, Math.ceil(curveLength / curveLength)),
 	flowFieldSize: 100,
 	flowFieldSmoothness: 0.3,
 	flowFieldPerlin: true,
 	flowFieldPerlinResolution: 18,
-	samplesPerCurve: 2,
-	curveLength: 7,
+	curveLength: curveLength,
 	iterationsPerFrame: 100,
-	disSeperation: 6,
+	disSeperation: dSep,
 	lineWidth: 3,
 	bgColor: "rgb(10, 10, 10)",
 	githubLink: () =>
@@ -163,7 +166,6 @@ function clearRestart() {
 }
 
 c.lineWidth = opts.lineWidth
-c.globalCompositeOperation = "hard-light"
 function render() {
 	if (paused) {
 		window.requestAnimationFrame(render)
@@ -213,13 +215,24 @@ ffFolder
 	.name("Perlin Resolution")
 ffFolder.open()
 
-gui
-	.add(opts, "samplesPerCurve", 2, 1000, 1)
-	.onChange(v => clearRestart())
-	.name("Sample / Curve")
+//computed automatically
+// gui
+// 	.add(opts, "samplesPerCurve", 2, 1000, 1)
+// 	.onChange(v => clearRestart())
+// 	.name("Sample / Curve")
+
 gui
 	.add(opts, "curveLength", 2, 250, 1)
-	.onChange(v => clearRestart())
+	.onChange(v => {
+		opts.gridSize = Math.ceil(width / opts.disSeperation)
+
+		opts.samplesPerCurve = Math.max(
+			2,
+			Math.ceil(opts.curveLength / (opts.disSeperation + 1))
+		)
+
+		clearRestart()
+	})
 	.name("Curve length")
 gui
 	.add(opts, "disSeperation", 1, 50, 0.1)
