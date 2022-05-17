@@ -104,7 +104,8 @@ var opts = {
 	samplesPerCurve: 2,
 	curveLength: 14,
 	iterationsPerFrame: 100,
-	disSeperation: 4
+	disSeperation: 4,
+	lineWidth: 1
 }
 
 let ff = getFlowField()
@@ -161,13 +162,13 @@ function clearRestart() {
 	grid.init()
 }
 
+c.lineWidth = 1
 function render() {
 	if (paused) {
 		window.requestAnimationFrame(render)
 		return
 	}
 	c.strokeStyle = getRandomColor()
-	c.lineWidth = 1
 	curvesToDraw = []
 	placeNewLine()
 	curvesToDraw
@@ -182,16 +183,50 @@ function render() {
 }
 
 const gui = new dat.GUI()
-gui.add(opts, "gridSize", 10, 1000, 1).onChange(v => clearRestart())
-gui.add(opts, "flowFieldSize", 10, 1000, 1).onChange(v => clearRestart())
-gui.add(opts, "flowFieldSmoothness", 0, 1, 0.01).onChange(v => clearRestart())
-gui.add(opts, "flowFieldPerlin", true).onChange(v => clearRestart())
-gui
+
+//Think this only influences performance, dependent on canvas dimensions
+// gui
+// 	.add(opts, "gridSize", 10, 1000, 1)
+// 	.onChange(v => clearRestart())
+// 	.name("Grid Size")
+let ffFolder = gui.addFolder("FlowField")
+ffFolder
+	.add(opts, "flowFieldSize", 10, 1000, 1)
+	.onChange(v => clearRestart())
+	.name("Grid Size")
+ffFolder
+	.add(opts, "flowFieldSmoothness", 0, 1, 0.01)
+	.onChange(v => clearRestart())
+	.name("Smoothing")
+ffFolder
+	.add(opts, "flowFieldPerlin", true)
+	.onChange(v => clearRestart())
+	.name("Use Perlin noise")
+ffFolder
 	.add(opts, "flowFieldPerlinResolution", 1, 250, 0.1)
 	.onChange(v => clearRestart())
-gui.add(opts, "samplesPerCurve", 2, 1000, 1).onChange(v => clearRestart())
-gui.add(opts, "curveLength", 1, 250, 1).onChange(v => clearRestart())
-gui.add(opts, "iterationsPerFrame", 0, 1000, 1)
-gui.add(opts, "disSeperation", 1, 100, 0.1).onChange(v => clearRestart())
+	.name("Perlin Resolution")
+
+gui
+	.add(opts, "samplesPerCurve", 2, 1000, 1)
+	.onChange(v => clearRestart())
+	.name("Sample / Curve")
+gui
+	.add(opts, "curveLength", 2, 250, 1)
+	.onChange(v => clearRestart())
+	.name("Curve length")
+gui
+	.add(opts, "disSeperation", 1, 100, 0.1)
+	.onChange(v => clearRestart())
+	.name("Seperation")
+
+let renderFolder = gui.addFolder("Rendering")
+renderFolder
+	.add(opts, "iterationsPerFrame", 0, 1000, 1)
+	.name("Iterations/Frame")
+renderFolder
+	.add(opts, "lineWidth", 0.01, 25, 0.01)
+	.name("Linewidth")
+	.onChange(t => (c.lineWidth = opts.lineWidth))
 
 render()
