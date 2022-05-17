@@ -1,5 +1,3 @@
-window.$fxhashFeatures = {}
-
 class Grid {
 	constructor() {
 		this.init()

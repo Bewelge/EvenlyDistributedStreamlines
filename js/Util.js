@@ -195,7 +195,6 @@ function getSmoothCurveThroughPoints(points) {
 		curves.push(new QuadraticCurve(curP, points[i], new Vec2(xc, yc)))
 		curP = new Vec2(xc, yc)
 	}
-	// curve through the last two points
 
 	curves.push(
 		new QuadraticCurve(
