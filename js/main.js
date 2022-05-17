@@ -99,13 +99,14 @@ var opts = {
 	gridSize: 100,
 	flowFieldSize: 100,
 	flowFieldSmoothness: 0.3,
-	flowFieldPerlin: true,
+	flowFieldPerlin: false,
 	flowFieldPerlinResolution: 100,
 	samplesPerCurve: 2,
-	curveLength: 14,
+	curveLength: 30,
 	iterationsPerFrame: 100,
-	disSeperation: 4,
-	lineWidth: 1
+	disSeperation: 15,
+	lineWidth: 5,
+	bgColor: "rgba(0,0,0,1)"
 }
 
 let ff = getFlowField()
@@ -151,10 +152,6 @@ function placeNewLine() {
 	}
 }
 
-function getPotentialCurve(p) {
-	let newP = p.copy().addAngle()
-}
-
 function clearRestart() {
 	c.clearRect(0, 0, width, height)
 	curvesToDraw = []
@@ -162,15 +159,18 @@ function clearRestart() {
 	grid.init()
 }
 
-c.lineWidth = 1
+c.lineWidth = opts.lineWidth
 function render() {
 	if (paused) {
 		window.requestAnimationFrame(render)
 		return
 	}
-	c.strokeStyle = getRandomColor()
+
 	curvesToDraw = []
+
 	placeNewLine()
+
+	c.strokeStyle = getRandomColor()
 	curvesToDraw
 		.flatMap(m => m)
 		.forEach(curve => {
@@ -179,6 +179,7 @@ function render() {
 			c.stroke()
 			c.closePath()
 		})
+
 	window.requestAnimationFrame(render)
 }
 
@@ -228,5 +229,9 @@ renderFolder
 	.add(opts, "lineWidth", 0.01, 25, 0.01)
 	.name("Linewidth")
 	.onChange(t => (c.lineWidth = opts.lineWidth))
+renderFolder
+	.addColor(opts, "bgColor")
+	.onChange(t => clearRestart())
+	.name("Background-Color")
 
 render()
