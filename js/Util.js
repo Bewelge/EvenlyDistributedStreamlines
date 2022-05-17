@@ -146,7 +146,7 @@ function randomInt(min, max) {
 	return Math.floor(randomFloat(min, max))
 }
 function randomFloat(min, max) {
-	return min + fxrand() * (max - min)
+	return min + Math.random() * (max - min)
 }
 
 function clamp(val, min, max) {
@@ -198,10 +198,10 @@ function doXTimes(times, toDo) {
 }
 
 function rndFloat(min = 0, max = 1) {
-	return min + (max - min) * fxrand()
+	return min + (max - min) * Math.random()
 }
 function rndInt(min = 0, max = 1) {
-	return Math.floor(min + (max - min) * fxrand() + 0.5)
+	return Math.floor(min + (max - min) * Math.random() + 0.5)
 }
 function rndAng() {
 	return rndFloat(0, Math.PI * 2)
