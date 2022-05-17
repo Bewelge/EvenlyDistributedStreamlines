@@ -99,14 +99,17 @@ var opts = {
 	gridSize: 100,
 	flowFieldSize: 100,
 	flowFieldSmoothness: 0.3,
-	flowFieldPerlin: false,
-	flowFieldPerlinResolution: 100,
+	flowFieldPerlin: true,
+	flowFieldPerlinResolution: 18,
 	samplesPerCurve: 2,
-	curveLength: 30,
+	curveLength: 7,
 	iterationsPerFrame: 100,
-	disSeperation: 15,
-	lineWidth: 5,
-	bgColor: "rgba(0,0,0,1)"
+	disSeperation: 6,
+	lineWidth: 3,
+	bgColor: "rgb(10, 10, 10)",
+	githubLink: () =>
+		(window.location =
+			"https://github.com/Bewelge/EvenlyDistributedStreamlines")
 }
 
 let ff = getFlowField()
@@ -137,7 +140,7 @@ function construcCurveFromSamplePoint(p) {
 		p.addAngle(ang, opts.curveLength)
 	}
 	if (points.length > 2) {
-		let curves = smoothLineThroughPoints(new Path2D(), points, true).curves
+		let curves = getSmoothCurveThroughPoints(points)
 		curves.forEach(curve =>
 			getCurveSamplePoints(curve).forEach(curveP => grid.addPoint(curveP))
 		)
@@ -160,6 +163,7 @@ function clearRestart() {
 }
 
 c.lineWidth = opts.lineWidth
+c.globalCompositeOperation = "hard-light"
 function render() {
 	if (paused) {
 		window.requestAnimationFrame(render)
@@ -207,6 +211,7 @@ ffFolder
 	.add(opts, "flowFieldPerlinResolution", 1, 250, 0.1)
 	.onChange(v => clearRestart())
 	.name("Perlin Resolution")
+ffFolder.open()
 
 gui
 	.add(opts, "samplesPerCurve", 2, 1000, 1)
@@ -217,21 +222,24 @@ gui
 	.onChange(v => clearRestart())
 	.name("Curve length")
 gui
-	.add(opts, "disSeperation", 1, 100, 0.1)
+	.add(opts, "disSeperation", 1, 50, 0.1)
 	.onChange(v => clearRestart())
 	.name("Seperation")
 
 let renderFolder = gui.addFolder("Rendering")
+renderFolder.open()
+renderFolder
+	.addColor(opts, "bgColor")
+	.onChange(t => (document.body.style.backgroundColor = opts.bgColor))
+	.name("Background-Color")
 renderFolder
 	.add(opts, "iterationsPerFrame", 0, 1000, 1)
 	.name("Iterations/Frame")
 renderFolder
-	.add(opts, "lineWidth", 0.01, 25, 0.01)
+	.add(opts, "lineWidth", 0.1, 25, 0.1)
 	.name("Linewidth")
 	.onChange(t => (c.lineWidth = opts.lineWidth))
-renderFolder
-	.addColor(opts, "bgColor")
-	.onChange(t => clearRestart())
-	.name("Background-Color")
+
+gui.add(opts, "githubLink").name("Github Project")
 
 render()
