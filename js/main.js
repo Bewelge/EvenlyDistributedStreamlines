@@ -1,3 +1,4 @@
+const ITERATION_LIMIT = 1000
 class Grid {
 	constructor() {
 		this.init()
@@ -148,7 +149,9 @@ function getCurveSamplePoints(curve) {
 function construcCurveFromSamplePoint(p) {
 	grid.clearTmp()
 	let points = []
-	while (grid.checkPoint(p)) {
+	let counter = 0
+	while (grid.checkPoint(p) && counter < ITERATION_LIMIT) {
+		counter++
 		grid.addTmpPoint(p.copy())
 		points.push(p.copy())
 		let ang = ff.getAng(p.x, p.y)
@@ -235,14 +238,11 @@ ffFolder.open()
 // 	.name("Sample / Curve")
 
 gui
-	.add(opts, "curveLength", 2, 250, 1)
+	.add(opts, "curveLength", 2, 150, 1)
 	.onChange(v => {
 		opts.gridSize = Math.ceil(width / opts.disSeperation)
 
-		opts.samplesPerCurve = Math.max(
-			2,
-			Math.ceil(opts.curveLength / (opts.disSeperation + 1))
-		)
+		opts.samplesPerCurve = Math.max(2, Math.ceil(opts.curveLength / 5))
 
 		clearRestart()
 	})
