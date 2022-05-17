@@ -70,6 +70,15 @@ class Grid {
 		let cell = this.getCellForP(p)
 		this.tiles[cell.y][cell.x].push(p.copy())
 	}
+	addTmpPoint(p) {
+		this.tmpPoints.push(p.copy())
+	}
+	clearTmp() {
+		this.tmpPoints = []
+	}
+	addTmps() {
+		this.tmpPoints.forEach(p => this.addPoint(p))
+	}
 	isCellOkay(p, cell) {
 		return (
 			this.getPointsForCell(cell).find(
@@ -81,6 +90,10 @@ class Grid {
 		if (p.x < 0 || p.y < 0 || p.x > width || p.y > height) {
 			return false
 		}
+		if (this.tmpPoints.find(tp => tp.distanceTo(p) < opts.disSeperation)) {
+			return false
+		}
+
 		let cell = this.getCellForP(p)
 		if (!this.isCellOkay(p, cell)) return false
 		let neighborsOkay =
@@ -133,14 +146,16 @@ function getCurveSamplePoints(curve) {
 }
 
 function construcCurveFromSamplePoint(p) {
+	grid.clearTmp()
 	let points = []
 	while (grid.checkPoint(p)) {
-		grid.addPoint(p.copy())
+		grid.addTmpPoint(p.copy())
 		points.push(p.copy())
 		let ang = ff.getAng(p.x, p.y)
 		p.addAngle(ang, opts.curveLength)
 	}
 	if (points.length > 2) {
+		grid.addTmps()
 		let curves = getSmoothCurveThroughPoints(points)
 		curves.forEach(curve =>
 			getCurveSamplePoints(curve).forEach(curveP => grid.addPoint(curveP))
